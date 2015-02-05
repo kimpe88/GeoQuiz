@@ -1,5 +1,14 @@
 extends layout
 
 block content
-  h1= title
-  p Welcome to #{title}
+  div(data-role="page")
+    div(data-role="header")
+      h1 GeoQuiz
+    div(data-role="main" class="ui-content")
+      div(id="viking")
+        img(src="images/viking.png")
+      a(href="#" class="ui-btn") Login with facebook
+      a(href="#" data-role="button") How To Play
+    div(data-role="footer")
+      p
+        Footer goes here
