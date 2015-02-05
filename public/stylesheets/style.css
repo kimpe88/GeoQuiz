@@ -1,6 +1,14 @@
 #viking {
   margin-left: auto;
   margin-right: auto;
-  width: auto;
 }
 
+/*
+ * Auto scale images to fit different mobile screen
+ */
+img
+{
+    max-width: 100%;
+    min-width: 300px;
+    height: auto;
+}

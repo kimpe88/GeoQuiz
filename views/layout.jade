@@ -9,7 +9,13 @@ html
     link(rel='stylesheet', href='/stylesheets/style.css')
     meta(name="viewport" content="width=device-width, initial-scale=1.0")
   body
-    block content
+    div(data-role="page")
+      div(data-role="header")
+        h1 VikingQuest
+      block content
+      div(data-role="footer")
+        center
+          p VikingQuest© 2015
     script(src='/javascripts/jquery/jquery-2.1.3.js')
     script(src='/javascripts/jquery_mobile/jquery.mobile-1.4.5.js')
     script(src='/javascripts/bootstrap/bootstrap.js')
