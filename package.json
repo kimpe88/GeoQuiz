@@ -2,11 +2,14 @@
   "name": "GeoQuiz",
   "version": "0.0.1",
   "private": true,
+  "engines": {
+    "node": "0.10.36"
+  },
   "scripts": {
     "start": "node ./bin/www",
     "test": "node_modules/mocha/bin/mocha tests",
-    "test-watch": "node_modules/mocha/bin/mocha  -w . tests",
-    "monitor": "node ./bin/www"
+    "testw": "node_modules/mocha/bin/mocha  -w . tests",
+    "startm": "nodemon ./bin/www"
   },
   "dependencies": {
     "body-parser": "~1.0.0",
