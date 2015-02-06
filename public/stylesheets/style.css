@@ -12,3 +12,10 @@ img
     min-width: 300px;
     height: auto;
 }
+
+#map-canvas {
+  height: 100%;
+  margin: 0px;
+  padding: 0px
+}
+

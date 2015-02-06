@@ -6,7 +6,8 @@ var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 //var auth = require('./models/auth');
 
-var routes = require('./routes/index');
+var index = require('./routes/index');
+var play = require('./routes/play');
 
 var app = express();
 
@@ -21,7 +22,8 @@ app.use(bodyParser.urlencoded());
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
-app.use('/', routes);
+app.use('/', index);
+app.use('/play', play);
 
 // TODO needs custom domain to work
 // Redirect the user to Facebook for authentication.  When complete,

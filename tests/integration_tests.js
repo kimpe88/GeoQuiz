@@ -14,3 +14,17 @@ describe('GET root path', function() {
     .expect(/VikingQuest/, done);
   });
 });
+describe('GET /play path', function() {
+  it('responds with 200 sucess', function(done) {
+    request(app)
+    .get('/play')
+    .expect(200, done);
+  });
+
+  it('it contains start game', function(done) {
+    request(app)
+    .get('/play')
+    .expect(/start game/i, done);
+  });
+
+});

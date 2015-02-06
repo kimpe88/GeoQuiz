@@ -4,7 +4,8 @@
   "private": true,
   "scripts": {
     "start": "node ./bin/www",
-    "test": "node_modules/mocha/bin/mocha  -w . tests"
+    "test": "node_modules/mocha/bin/mocha  -w . tests",
+    "monitor": "node ./bin/www"
   },
   "dependencies": {
     "body-parser": "~1.0.0",
