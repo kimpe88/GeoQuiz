@@ -28,3 +28,16 @@ describe('GET /play path', function() {
   });
 
 });
+describe('GET /howtoplay path', function() {
+  it('responds with 200 sucess', function(done) {
+    request(app)
+    .get('/howtoplay')
+    .expect(200, done);
+  });
+
+  it('it contains Become the King of the world', function(done) {
+    request(app)
+    .get('/howtoplay')
+    .expect(/Become the King of the world/i, done);
+  });
+});
