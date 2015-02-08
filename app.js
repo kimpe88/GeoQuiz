@@ -25,7 +25,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 // Custom routes
 app.use('/', index);
 app.use('/play', play);
-app.use('/howtoplay', howtoplay);
+
 
 // TODO needs custom domain to work
 // Redirect the user to Facebook for authentication.  When complete,

@@ -1,9 +1,8 @@
 extends layout
 
 block content
-  div(data-role="main" class="ui-content")
-    div(id="map-canvas")
-    div(id="score-container")
-    a(href="#" data-role="button") Start game
-    script(src="https://maps.googleapis.com/maps/api/js?v=3.exp&signed_in=true")
-    script(src="javascripts/geolocation_map.js")
+  div(id="map-canvas")
+  div(id="score-container")
+  a(href="#" data-role="button") Start game
+  script(src="https://maps.googleapis.com/maps/api/js?v=3.exp&signed_in=true")
+  script(src="javascripts/geolocation_map.js")
