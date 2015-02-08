@@ -1,16 +1,15 @@
 extends layout
 
 block content
- div(class="lead row text-center")
+ div(class="lead text-center")
   div(data-role="header")
   h1 Become the King of the world !
-  h2 Expand your reign with your intelligence!
+  h4 Expand your reign with your intelligence!
  div(data-role="main" class="ui-content")
-    div(id="globe")
-      img(src="images/globe.jpg")
-    
-    a(href="/" class="ui-btn") Back
-    
- div(data-role="footer")
-    center
-        p VikingQuest© 2015
+  div(id="globe" class="col-xs-12 col-sm-12 col-md-12 img-responsive")
+   center
+    img(src="images/globe.jpg")
+ .text-justify
+  p Click an aerea on the map that you want to conquer and join a quiz battle. Squeeze your brain answering all the questions and set the highest score! After you conquered an area, move physically with the GPS to the next new aerea!
+ a(href="/" class="ui-btn") Back to the Game !
+ 
