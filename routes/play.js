@@ -11,4 +11,11 @@ module.exports = router;
 router.get('/quiz', function(req, res){
   res.render('quiz');
 });
+
+//is mapped to /play/quiz_failed
+router.get('/quiz_failed', function(req, res){
+  res.render('quiz_failed',{AREA_NAME: 'KISTA 35.20'});
+});
+
+
 module.exports = router;

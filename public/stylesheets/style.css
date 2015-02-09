@@ -2,11 +2,30 @@
   margin-left: auto;
   margin-right: auto;
 }
+#gameover{
+  margin-left: auto;
+  margin-right: auto;
+}
 #globe {
   margin-left: auto;
   margin-right: auto;
 }
 
+#link_new_area_play{
+  color: white;
+  font-size: 1.9em;
+}
+#link_back_homepage{
+
+  color: white;
+  font-size: 0.9em;
+
+}
+
+.mywrap{
+  white-space: normal;
+  
+}
 /*
  * Auto scale images to fit different mobile screen
  */
