@@ -4,10 +4,12 @@ var favicon = require('static-favicon');
 var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
+var mongoose = require('mongoose');
 //var auth = require('./models/auth');
 
 var index = require('./routes/index');
 var play = require('./routes/play');
+var api = require('./routes/api');
 
 var app = express();
 
@@ -25,7 +27,21 @@ app.use(express.static(path.join(__dirname, 'public')));
 // Custom routes
 app.use('/', index);
 app.use('/play', play);
+app.use('/api', api);
 
+
+// Setup database
+var connectURI = process.env.MONGOLAB_URI || 'mongodb://localhost/test';
+mongoose.connect(connectURI);
+var db = mongoose.connection;
+db.on('error', console.error.bind(console, 'connection error:'));
+db.once('open', function() {
+  console.log("Successfully connected to database");
+});
+// Pass ref to database connection with every request
+app.use('*', function(res, req, next) {
+  req.db = db;
+});
 
 // TODO needs custom domain to work
 // Redirect the user to Facebook for authentication.  When complete,
