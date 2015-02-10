@@ -1,0 +1,41 @@
+extends layout
+
+block content
+  div(class="ui-content col-md-12")
+    center
+      img(src="/images/trophy.png")
+  div(class="row col-md-12")
+    center
+      h1 Congratulations ! 
+    div(class="row col-md-12  text-center")
+      if MYRANK ==1   
+        h3(style="display:inline;") You are super-awesome! You are the 1# NEW KING of  
+        h2(style="display:inline;")=AREA_NAME
+      else
+        h3(style="display:inline;") 'You are great! Your rank is '
+        h2(style="display:inline;")=MYRANK 
+        h3(style="display:inline;") # in 
+        h2(style="display:inline;")=AREA_NAME
+  div(class="ui-content")
+    div(id="gameover" class="row col-xs-12")
+      img(src="/images/viking-logo.png")
+      h3'Your super score is '
+      center
+        h2=MYSCORE
+    div(class="row")    
+      div(class="col-xs-6")
+        center
+          p Set an higher Record !
+          h4=AREA_NAME
+      div(class="col-xs-6")
+        center
+          p Or you can move your ass to the next area to conquer!  
+    div(class="row") 
+      div(class="col-xs-6 btn btn-danger")
+        a(id="link_new_area_play" href="/quiz" class=" mywrap") Fight again!
+      div(class="col-xs-6 btn btn-primary")
+        a( id="link_new_area_play" href="/play" class=" mywrap" ) I'm in a new area, let's play!
+    div(class="row text-center") 
+      center
+        div(class="col-xs-offset-2 col-xs-8 btn btn-warning text-center")
+            a( id="link_back_homepage" href="/" class=" mywrap" ) Save and Back to HomePage!

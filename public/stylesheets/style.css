@@ -21,11 +21,24 @@
   font-size: 0.9em;
 
 }
+.inline{
 
+  display: inline;
+}
 .mywrap{
   white-space: normal;
   
 }
+
+/*
+div .col-md-12 .trophy {
+
+    z-index: -2;
+    background-image: url(/images/viking-logo.png), url(/images/trophy.png);
+    background-position: center top, left top;
+    background-repeat: no-repeat;
+}
+*/
 /*
  * Auto scale images to fit different mobile screen
  */
