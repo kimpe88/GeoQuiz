@@ -11,9 +11,6 @@ router.post('/create_game', function(req, res) {
     return invalidRequest(res);
   }
 
-
-
-
   res.status(201);
   res.send();
 });
