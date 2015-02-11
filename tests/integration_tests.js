@@ -1,6 +1,4 @@
 var request = require('supertest');
-var utils = require('./utils.js');
-
 var app = require('../app');
 
 describe('GET root path', function() {
@@ -44,16 +42,13 @@ describe('GET /howtoplay path', function() {
   });
 });
 
-describe('POST /api/create_game', function(done) {
+describe('/api/create_game', function() {
   it('should fail with insufficient params', function(done) {
     request(app)
     .post('/api/create_game', {userId: "", lat: 123, long: 321})
     .expect(400, done);
   });
-
   it('creates a game successfully with the correct params', function() {
-    request(app)
-    .post('/api/create_game', {userId: "123", lat: 123, long: 321})
-    .expect(201, done);
+    
   });
 });
