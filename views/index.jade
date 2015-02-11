@@ -1,16 +1,14 @@
 extends layout
 
 block content
- div(class="lead")
-  center
-   h1 VikingQuest
- div(data-role="main" class="ui-content")
+  div(data-role="header" class="lead header-index")
+    center
+      h1 VikingQuest
+  div(data-role="main" class="ui-content")
     div(id="viking")
       img(src="images/viking.png")
- a(href="/auth/facebook" data-role="button") Login with Facebook
- a(href="howtoplay" data-role="button") How To Play
- p
- p
- div(data-role="footer")
-  center
-   h5 VikingQuest© 2015
+    a(href="/auth/facebook" data-role="button") Login with Facebook
+    a(href="howtoplay" data-role="button") How To Play
+  div(data-role="footer")
+    center
+      h5 VikingQuest© 2015

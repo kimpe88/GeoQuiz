@@ -1,0 +1,17 @@
+extends layout
+
+block content
+ div(class="lead")
+   center
+     h1 Come On ! 
+     h2 You are almost in the Top 50 !
+ div(data-role="main" class="ui-content")
+    div(id="viking")
+      img(src="images/viking.png")
+ a(href="/auth/facebook" data-role="button") Login with Facebook
+ a(href="howtoplay" data-role="button") How To Play
+ p
+ p
+ div(data-role="footer")
+  center
+   h5 VikingQuest© 2015

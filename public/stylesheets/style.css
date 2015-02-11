@@ -2,11 +2,43 @@
   margin-left: auto;
   margin-right: auto;
 }
+#gameover{
+  margin-left: auto;
+  margin-right: auto;
+}
 #globe {
   margin-left: auto;
   margin-right: auto;
 }
 
+#link_new_area_play{
+  color: white;
+  font-size: 1.9em;
+}
+#link_back_homepage{
+
+  color: white;
+  font-size: 0.9em;
+
+}
+.inline{
+
+  display: inline;
+}
+.mywrap{
+  white-space: normal;
+  
+}
+
+/*
+div .col-md-12 .trophy {
+
+    z-index: -2;
+    background-image: url(/images/viking-logo.png), url(/images/trophy.png);
+    background-position: center top, left top;
+    background-repeat: no-repeat;
+}
+*/
 /*
  * Auto scale images to fit different mobile screen
  */
