@@ -1,6 +1,6 @@
-// Requests the user location and inserts a Google Maps view with the user location marked
-// on the map
-
+/**
+ * Builds the GoogleMap object and locates the users position.
+ */
 var geolocationMap = function () {
     var map;
 
@@ -15,6 +15,7 @@ var geolocationMap = function () {
             navigator.geolocation.getCurrentPosition(function (position) {
                 var pos = new google.maps.LatLng(position.coords.latitude, position.coords.longitude);
 
+                // alert(pos);
 
                 var icon = "images/viking icon.png";
 
@@ -25,6 +26,23 @@ var geolocationMap = function () {
                 });
 
                 map.setCenter(pos);
+
+                for (var x = 0; x < 10; x++) {
+                    for (var y = 0; y < 5; y++) {
+                        pos = new google.maps.LatLng(position.coords.latitude + (x * 0.001), position.coords.longitude + (y * 0.001));
+                        var rectangle = new google.maps.Rectangle({
+                            strokeColor: '#00FF00',
+                            strokeOpacity: 0.8,
+                            strokeWeight: 2,
+                            fillColor: '#009900',
+                            fillOpacity: 0.35,
+                            map: map,
+                            bounds: new google.maps.LatLngBounds(
+                                    new google.maps.LatLng(position.coords.latitude + (x * 0.001), position.coords.longitude + (y * 0.001)),
+                                    new google.maps.LatLng(position.coords.latitude + ((x + 1) * 0.001), position.coords.longitude + ((y + 1) * 0.001)))
+                        });
+                    }
+                }
             }, function () {
                 handleNoGeolocation(true);
             });
@@ -54,4 +72,16 @@ var geolocationMap = function () {
 
     google.maps.event.addDomListener(window, 'load', initialize);
 };
+
+/**
+ * MEMO:
+ * Latitude (x) -90 --> 90
+ * Longitude (y) -180 --> 180
+ * Scale = 0.001
+ * Results in:
+ * 180'000 x 320'000 = 57'600'000'000 tiles!
+ */
+
+
+//Run
 geolocationMap();
