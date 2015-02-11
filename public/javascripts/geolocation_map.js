@@ -6,7 +6,7 @@ var map;
 var geolocationMap = function () {
     function initialize() {
         var mapOptions = {
-            zoom: 12
+            zoom: 17
         };
         map = new google.maps.Map(document.getElementById('map-canvas'), mapOptions);
 
@@ -15,7 +15,7 @@ var geolocationMap = function () {
             navigator.geolocation.getCurrentPosition(function (position) {
                 var pos = new google.maps.LatLng(position.coords.latitude, position.coords.longitude);
 
-                // alert(pos);
+                //alert(pos);
 
                 var icon = "images/viking icon.png";
 
@@ -25,26 +25,55 @@ var geolocationMap = function () {
                     icon: icon
                 });
 
-                map.setCenter(pos);
+                var radius = new google.maps.Circle({
+                    strokeColor: '#FFFF00',
+                    strokeOpacity: 0.8,
+                    strokeWeight: 2,
+                    fillColor: '#FFFF00',
+                    fillOpacity: 0.35,
+                    center: pos,
+                    map: map,
+                    radius: 100
+                });
 
-                //Test purpose
-                for (var x = 0; x < 10; x++) {
-                    for (var y = 0; y < 5; y++) {
-                        pos = new google.maps.LatLng(position.coords.latitude + (x * 0.001), position.coords.longitude + (y * 0.001));
-                        var rectangle = new google.maps.Rectangle({
-                            strokeColor: '#00FF00',
-                            strokeOpacity: 0.8,
-                            strokeWeight: 2,
-                            fillColor: '#009900',
-                            fillOpacity: 0.35,
-                            map: map,
-                            bounds: new google.maps.LatLngBounds(
-                                    new google.maps.LatLng(position.coords.latitude + (x * 0.001), position.coords.longitude + (y * 0.001)),
-                                    new google.maps.LatLng(position.coords.latitude + ((x + 1) * 0.001), position.coords.longitude + ((y + 1) * 0.001)))
-                        });
-                    }
-                }
-                //Test end
+                //Make AJAX calls and use these to draw rectangles on the area
+
+                //TEMP STUFF OMG!!!
+                 var rectangle = new google.maps.Rectangle({
+                    strokeColor: '#00FF00',
+                    strokeOpacity: 0.8,
+                    strokeWeight: 2,
+                    fillColor: '#009900',
+                    fillOpacity: 0.35,
+                    map: map,
+                    bounds: new google.maps.LatLngBounds(
+                            new google.maps.LatLng(position.coords.latitude + (1 * 0.001), position.coords.longitude + (1 * 0.001)),
+                            new google.maps.LatLng(position.coords.latitude + (2 * 0.001), position.coords.longitude + (2 * 0.001)))
+                });
+                rectangle = new google.maps.Rectangle({
+                    strokeColor: '#00FF00',
+                    strokeOpacity: 0.8,
+                    strokeWeight: 2,
+                    fillColor: '#009900',
+                    fillOpacity: 0.35,
+                    map: map,
+                    bounds: new google.maps.LatLngBounds(
+                            new google.maps.LatLng(position.coords.latitude + (2 * 0.001), position.coords.longitude + (1 * 0.001)),
+                            new google.maps.LatLng(position.coords.latitude + (3 * 0.001), position.coords.longitude + (2 * 0.001)))
+                });
+                rectangle = new google.maps.Rectangle({
+                    strokeColor: '#00FF00',
+                    strokeOpacity: 0.8,
+                    strokeWeight: 2,
+                    fillColor: '#009900',
+                    fillOpacity: 0.35,
+                    map: map,
+                    bounds: new google.maps.LatLngBounds(
+                            new google.maps.LatLng(position.coords.latitude + (1 * 0.001), position.coords.longitude + (2 * 0.001)),
+                            new google.maps.LatLng(position.coords.latitude + (2 * 0.001), position.coords.longitude + (3 * 0.001)))
+                });
+
+                map.setCenter(pos);
             }, function () {
                 handleNoGeolocation(true);
             });
