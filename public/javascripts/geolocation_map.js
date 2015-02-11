@@ -1,9 +1,9 @@
 /**
  * Builds the GoogleMap object and locates the users position.
  */
-var geolocationMap = function () {
-    var map;
+var map;
 
+var geolocationMap = function () {
     function initialize() {
         var mapOptions = {
             zoom: 12
@@ -27,6 +27,7 @@ var geolocationMap = function () {
 
                 map.setCenter(pos);
 
+                //Test purpose
                 for (var x = 0; x < 10; x++) {
                     for (var y = 0; y < 5; y++) {
                         pos = new google.maps.LatLng(position.coords.latitude + (x * 0.001), position.coords.longitude + (y * 0.001));
@@ -43,6 +44,7 @@ var geolocationMap = function () {
                         });
                     }
                 }
+                //Test end
             }, function () {
                 handleNoGeolocation(true);
             });
@@ -79,7 +81,7 @@ var geolocationMap = function () {
  * Longitude (y) -180 --> 180
  * Scale = 0.001
  * Results in:
- * 180'000 x 320'000 = 57'600'000'000 tiles!
+ * 180'000 x 320'000 = 57'600'000'000 tiles! (oh shit!)
  */
 
 
