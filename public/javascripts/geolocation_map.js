@@ -33,7 +33,7 @@ var geolocationMap = function () {
                     fillOpacity: 0.35,
                     center: pos,
                     map: map,
-                    radius: 100
+                    radius: 180
                 });
 
                 //Make AJAX calls and use these to draw rectangles on the area
