@@ -1,6 +1,6 @@
 var expect = require('expect');
 var utils = require('./utils');
-var User = require('../models/models').User;
+var User = require('../models/user');
 
 describe('finds user', function() {
   var user;
@@ -12,7 +12,7 @@ describe('finds user', function() {
     user.remove(done);
   });
 
-  it('finds user by id', function(done) {
+  it('finds user by name', function(done) {
     User.find({username: 'test'}, function(err, results) {
       if(err) console.log(err);
       expect(results[0].username).toEqual(user.username);
