@@ -35,7 +35,7 @@ describe('testing tiles', function () {
         Tile.find({x: 50, y: 50}, function (err, results) {
             results[0].owner = "doomviking";
             expect(results[0].owner).toEqual("doomviking");
+            return done();
         });
-        return done();
     });
 });

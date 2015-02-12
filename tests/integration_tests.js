@@ -65,6 +65,9 @@ describe('/api/create_game', function() {
     request(app)
     .post('/api/create_game')
     .send({userId: user._id, lat: 123, long: 321})
-    .expect(201, done);
+    .expect(201, done)
+    .expect(/questionText/)
+    .expect(/alternatives/)
+    .expect(new RegExp(user._id,"g"));
   });
 });

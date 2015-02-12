@@ -1,4 +1,5 @@
 var express = require('express');
+var async = require('async');
 var User = require('../models/user');
 var Game = require('../models/game');
 var Question = require('../models/question');
@@ -14,37 +15,66 @@ router.post('/create_game', function(req, res) {
     return invalidRequest(res);
   }
 
-  console.log(userId);
   User.findById(userId)
   .populate('currentGame')
   .exec(function(err, user) {
     if(err || !user) return invalidRequest(res);
 
-    //if(user.currentGame){
-      //Game.remove(user.currentGame);
-    //}
-    //
-    
+    // If user is already in a game, remove it
+    // before creating a new one
+    if(user.currentGame){
+      Game.remove(user.currentGame);
+    }
+
     var newGame = Game({timeOut: new Date()});
-    Question.randomQuestion(function(err, question){
-      console.log(question);
-    });
-
-
-    res.status(201);
-    res.json(user);
+    // Execute the functions in order with return values of
+    // previous function as input
+    async.waterfall([
+      function(callback){
+        Question.randomQuestion(function(err,question){
+          return callback(err,question);
+        });
+      },
+      function(question,callback){
+        newGame.question = question._id;
+        user.currentGame = newGame._id;
+        newGame.save(function(err){
+          return callback(err,newGame,question);
+        });
+      }
+    ],
+      function(err, game, question){
+        if(err){
+          console.log("failed to create game " + game);
+          return errorRequest(res);
+        }
+        var details = {
+          userId: user._id,
+          questionText: question.questionText,
+          alternatives: question.alternatives
+        };
+        res.status(201);
+        return res.json(details);
+      }
+    );
   });
-
 });
 
-
+function errorRequest(res){
+  var err = {
+    success: false,
+    message: 'Internal server error'
+  };
+  res.status(500);
+  return res.json(err);
+}
 function invalidRequest(res){
   var err = {
     success: false,
     message: 'required request params not supplied'
   };
   res.status(400);
-  res.json(err);
+  return res.json(err);
 }
 
 module.exports = router;

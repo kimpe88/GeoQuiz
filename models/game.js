@@ -11,16 +11,16 @@ var gameSchema = Schema({
 /*
 Checks if the user chose the correct alternativ
 @param {Number} alternative
-@param {Function} callback true or false
+@param {Function} callback err & true or false
 */
 
-gameSchema.methods.correctAlternative = function(alternative, callback) {
-  this.populate('question').exec(function(err, story) {
-    if(err) throw err;
-    if(this.question.correctAlternative === alternative)
-      return callback(true);
+gameSchema.methods.checkAnswer = function(alternative, callback) {
+  this.populate('question', function(err, game) {
+    if(err) return callback(err,false);
+    if(game.question.correctAlternative === alternative)
+      return callback(null,true);
     else
-      return callback(false);
+      return callback(null,false);
  });
 };
 var Game;
