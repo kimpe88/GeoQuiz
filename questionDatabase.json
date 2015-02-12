@@ -44,7 +44,7 @@
 {"questionText": "In what year was Nelson Mandela released from prison and became the leader of the African National Congress?", "alternatives": ["1990", "1991", "1992", "1993"], "correctAlternative": 0 },
 {"questionText": "What actor starred and directed the cult movie “Reality Bites”", "alternatives": ["Will Ferrell", "Tom Cruise", "Ben Stiller", "Ethan Hawke"], "correctAlternative": 3 },
 {"questionText": "How many Oscars did the film Titanic win?", "alternatives": ["12", "10", "9", "11"], "correctAlternative": 3 },
-{"questionText": "What song had the most weeks at number one during the 90’s on Australian charts", "alternatives": ["Everything I do it for you – Bryan Adams", "I will do anything for love (But I Won’t Do That) – Meatloaf", "	I will always love you – Whitney Houston", "Gangta’s Paradise – Coolio"], "correctAlternative": 3 },
+{"questionText": "What song had the most weeks at number one during the 90’s on Australian charts", "alternatives": ["Everything I do it for you – Bryan Adams", "I will do anything for love (But I Won’t Do That) – Meatloaf", "I will always love you – Whitney Houston", "Gangta’s Paradise – Coolio"], "correctAlternative": 3 },
 {"questionText": "What year did the sitcom Friends screen to air?", "alternatives": ["1995", "1994", "1996", "1998"], "correctAlternative": 1 },
 {"questionText": "Who won the Men’s final at Wimbledon in 1993?", "alternatives": ["Pete Sampras", "Boris Becker", "Andre Agassi", "Jim Courier"], "correctAlternative": 0 },
 {"questionText": "Who lit the Olympic torch at the opening ceremony in the 1996 summer Olympics?", "alternatives": ["Michael Jordon", "Muhammad Ali", "Carl Lewis", "Ben Johnson"], "correctAlternative": 1 },
