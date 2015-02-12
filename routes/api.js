@@ -1,4 +1,7 @@
 var express = require('express');
+var User = require('../models/user');
+var Game = require('../models/game');
+var Question = require('../models/question');
 var router = express.Router();
 
 router.post('/create_game', function(req, res) {
@@ -11,8 +14,27 @@ router.post('/create_game', function(req, res) {
     return invalidRequest(res);
   }
 
-  res.status(201);
-  res.send();
+  console.log(userId);
+  User.findById(userId)
+  .populate('currentGame')
+  .exec(function(err, user) {
+    if(err || !user) return invalidRequest(res);
+
+    //if(user.currentGame){
+      //Game.remove(user.currentGame);
+    //}
+    //
+    
+    var newGame = Game({timeOut: new Date()});
+    Question.randomQuestion(function(err, question){
+      console.log(question);
+    });
+
+
+    res.status(201);
+    res.json(user);
+  });
+
 });
 
 

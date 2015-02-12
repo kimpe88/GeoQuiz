@@ -1,7 +1,9 @@
 var request = require('supertest');
 var app = require('../app');
+var User = require('../models/user');
+var Question = require('../models/question');
 
-describe('GET root path', function() {
+describe('GET root path', function(done) {
   it('responds with 200 sucess', function(done) {
     request(app)
     .get('/')
@@ -43,12 +45,26 @@ describe('GET /howtoplay path', function() {
 });
 
 describe('/api/create_game', function() {
+  var user;
+  beforeEach(function(done) {
+    User.findOne(function(err, foundUser){
+      user = foundUser;
+      return done();
+    });
+  });
+
+
   it('should fail with insufficient params', function(done) {
     request(app)
-    .post('/api/create_game', {userId: "", lat: 123, long: 321})
+    .post('/api/create_game')
+    .send({userId: "", lat: 123, long: 321})
     .expect(400, done);
   });
-  it('creates a game successfully with the correct params', function() {
-    
+  it('creates a game successfully with the correct params', function(done) {
+
+    request(app)
+    .post('/api/create_game')
+    .send({userId: user._id, lat: 123, long: 321})
+    .expect(201, done);
   });
 });

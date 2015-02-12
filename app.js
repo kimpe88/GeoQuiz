@@ -20,7 +20,7 @@ app.set('view engine', 'jade');
 app.use(favicon());
 app.use(logger('dev'));
 app.use(bodyParser.json());
-app.use(bodyParser.urlencoded());
+app.use(bodyParser.urlencoded({ extended: true }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
@@ -31,7 +31,8 @@ app.use('/api', api);
 
 
 // Setup database
-var connectURI = process.env.MONGOLAB_URI || 'mongodb://localhost/test';
+var database = process.env.NODE_ENV || 'development';
+var connectURI = process.env.MONGOLAB_URI || 'mongodb://localhost/' + database;
 mongoose.connect(connectURI);
 var db = mongoose.connection;
 db.on('error', console.error.bind(console, 'connection error:'));

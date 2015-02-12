@@ -5,15 +5,14 @@ var User = require('../models/user');
 describe('finds user', function() {
   var user;
   beforeEach(function(done) {
-    user = new User({ username: 'test', authToken: 'dfadf' });
-    user.save(done);
-  });
-  afterEach(function(done) {
-    user.remove(done);
+    User.findOne(function(err, foundUser){
+      user = foundUser;
+      return done();
+    });
   });
 
   it('finds user by name', function(done) {
-    User.find({username: 'test'}, function(err, results) {
+    User.find({ username: user.username }, function(err, results) {
       if(err) console.log(err);
       expect(results[0].username).toEqual(user.username);
       return done();
@@ -21,7 +20,7 @@ describe('finds user', function() {
   });
 
   it('finds user by authToken', function(done) {
-    User.find({authToken: 'dfadf'}, function(err, results) {
+    User.find({ authToken: user.authToken }, function(err, results) {
       if(err) console.log(err);
       expect(results[0].authToken).toEqual(user.authToken);
       return done();
