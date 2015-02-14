@@ -2,6 +2,8 @@ var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
 var Question = require('../models/question');
 // Game model
+
+var TIME_OUT = 30000;
 // Create a schema for storing games in progress
 var gameSchema = Schema({
    timeOut: Date,
@@ -23,6 +25,15 @@ gameSchema.methods.checkAnswer = function(alternative, callback) {
       return callback(null,false);
  });
 };
+
+// Checks if 30 seconds has past since last question
+// returns true if question has timed out
+// false if still time left
+gameSchema.methods.hasTimedOut = function(){
+  var diff =  new Date() - this.timeOut;
+  return diff >= TIME_OUT;
+};
+
 var Game;
 if (mongoose.models.Game) {
  Game = mongoose.model('Game');
