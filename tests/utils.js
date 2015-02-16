@@ -40,7 +40,7 @@ beforeEach(function (done) {
           var game = new Game({timeOut: Date(), question: question._id});
           game.save(function(err){
             if(err) throw err;
-            new User({username: user.username, authToken: user.authToken, currentGame: game._id}).save(function(err, user){
+            new User({username: user.username, password: user.password, currentGame: game._id}).save(function(err, user){
               if(err) throw err;
               callback(err);
             });

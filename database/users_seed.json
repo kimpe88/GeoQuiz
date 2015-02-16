@@ -1,2 +1,2 @@
-[{"username": "user1", "authToken": "sdfasdf342" },
- {"username": "user2", "authToken": "3488fsdf"}]
+[{"username": "user1", "password": "password" },
+ {"username": "user2", "password": "password"}]

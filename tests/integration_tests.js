@@ -45,30 +45,39 @@ describe('GET /howtoplay path', function() {
 });
 
 describe('/api', function() {
-  var user;
+  var user, details;
   beforeEach(function(done) {
     User.findOne().populate('currentGame').exec(function(err, foundUser){
       user = foundUser;
+      details = {username: user.username, password: "password"};
       return done();
     });
+  });
+
+  it('authenticates correctly', function(done) {
+    request(app)
+    .get('/api')
+    .auth(details.username, details.password)
+    .expect(200, done);
   });
 
   describe('/api/create_game', function() {
     it('should fail with insufficient params', function(done) {
       request(app)
       .post('/api/create_game')
-      .send({userId: "", lat: 123, long: 321})
-      .expect(400, done);
+      .auth(details.username, "")
+      .send({lat: 123, long: 321})
+      .expect(401, done);
     });
     it('creates a game successfully with the correct params', function(done) {
 
       request(app)
       .post('/api/create_game')
-      .send({userId: user._id, lat: 123, long: 321})
+      .auth(details.username, details.password)
+      .send({lat: 123, long: 321})
       .expect(201)
       .expect(/questionText/)
-      .expect(/alternatives/)
-      .expect(new RegExp(user._id,"g"), done);
+      .expect(/alternatives/,done);
     });
   });
   describe('/api/check_answer', function() {
@@ -77,7 +86,8 @@ describe('/api', function() {
         var answer = question.correctAlternative + 1 % 4;
         request(app)
         .get('/api/check_answer')
-        .send({userId: user._id, chosenAlternative: answer})
+        .auth(details.username, details.password)
+        .send({chosenAlternative: answer})
         .expect(200)
         .expect(function(res){
           if(res.body.correctAnswer !== false || res.body.timedOut !== false)
@@ -92,7 +102,8 @@ describe('/api', function() {
         var answer = question.correctAlternative;
         request(app)
         .get('/api/check_answer')
-        .send({userId: user._id, chosenAlternative: answer})
+        .auth(details.username, details.password)
+        .send({chosenAlternative: answer})
         .expect(200)
         .expect(function(res){
           if(res.body.correctAnswer !== true || res.body.timedOut !== false)
@@ -109,7 +120,8 @@ describe('/api', function() {
           var answer = question.correctAlternative;
           request(app)
           .get('/api/check_answer')
-          .send({userId: user._id, chosenAlternative: answer})
+          .auth(details.username, details.password)
+          .send({chosenAlternative: answer})
           .expect(200)
           .expect(function(res){
             if(res.body.correctAnswer !== true || res.body.timedOut !== true)
@@ -120,5 +132,9 @@ describe('/api', function() {
       });
     });
   });
+
+  //describe('register_user', function() {
+    
+  //});
 });
 

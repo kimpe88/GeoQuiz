@@ -5,6 +5,12 @@ var Game = require('../models/game');
 var Question = require('../models/question');
 var router = express.Router();
 
+
+// Does nothing except sends 200 OK if auth is successful
+router.get('/', function(req, res){
+  return res.sendStatus(200);
+});
+
 /* listens for post request
  * creates a new game for specified user
  * @param {String} userid
@@ -12,12 +18,11 @@ var router = express.Router();
  * @param {Decimal} long
  */
 router.post('/create_game', function(req, res) {
-  var userId = req.body.userId;
   var lat = req.body.lat;
   var long = req.body.long;
   // If not all request params are supplied
   // respond with an error message
-  if(!userId || !lat || !long){
+  if(!lat || !long){
     return invalidRequest(res);
   }
 
@@ -25,8 +30,7 @@ router.post('/create_game', function(req, res) {
   // previous function as input
   async.waterfall([
     function(callback){
-      User.findById(userId)
-      .populate('currentGame')
+      User.findOne({username: req.user.username}).populate('currentGame')
       .exec(function(err, user) {
         if(user === null)
           return invalidRequest(res);
@@ -59,7 +63,6 @@ router.post('/create_game', function(req, res) {
         return errorRequest(res);
       }
       var details = {
-        userId: user._id,
         questionText: question.questionText,
         alternatives: question.alternatives
       };
@@ -72,17 +75,17 @@ router.post('/create_game', function(req, res) {
 /* listens for post request to /api/check_answer
  * checks if provided answer is correct or not
  * and whether answer was provided before timeout
- * @param {String} userId
+ * @param {String} username
+ * @param {String} password
  * @param {Number} choosenAlternative
  */
 router.get('/check_answer', function(req, res){
-  var userId = req.body.userId;
   var chosenAlternative = req.body.chosenAlternative;
-  if(userId === undefined || chosenAlternative === undefined)
+  if(chosenAlternative === undefined)
     return invalidRequest(res);
   async.waterfall([
     function(callback){
-      var user = User.findById(userId)
+      var user = User.findOne(req.user.username)
       .populate('currentGame')
       .exec(function(err,user){
         if(user === null)
@@ -103,7 +106,6 @@ router.get('/check_answer', function(req, res){
       return res.json(results);
     }
   );
-
 });
 
 function errorRequest(res){

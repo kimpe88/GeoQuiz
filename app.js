@@ -5,13 +5,16 @@ var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 var mongoose = require('mongoose');
-//var auth = require('./models/auth');
+var passport = require('passport');
+var auth = require('./models/auth');
+var User = require('./models/user');
 
 var index = require('./routes/index');
 var play = require('./routes/play');
 var api = require('./routes/api');
 
 var app = express();
+
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
@@ -23,11 +26,35 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
+app.use(passport.initialize());
 
 // Custom routes
 app.use('/', index);
 app.use('/play', play);
-app.use('/api', api);
+app.use('/api', auth.isAuthenticated, api);
+
+// Creates a new user by sending a POST to /user
+// @param {String} username
+// @param {String} password
+app.post('/user', function(req,res){
+  var username = req.body.username;
+  var password = req.body.password;
+
+  if(username === undefined || password === undefined) {
+    res.status(400);
+    return res.json("missing username or password");
+  }
+
+  var user = new User({username: username, password: password});
+  user.save(function(err,user){
+    if(err) {
+      res.status(500);
+      return res.json("could not save user");
+    }
+
+    return res.sendStatus(201);
+  });
+});
 
 
 // Setup database
@@ -43,6 +70,8 @@ db.once('open', function() {
 app.use('*', function(res, req, next) {
   req.db = db;
 });
+
+
 
 // TODO needs custom domain to work
 // Redirect the user to Facebook for authentication.  When complete,

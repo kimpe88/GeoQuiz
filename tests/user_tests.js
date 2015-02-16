@@ -19,11 +19,4 @@ describe('finds user', function() {
     });
   });
 
-  it('finds user by authToken', function(done) {
-    User.find({ authToken: user.authToken }, function(err, results) {
-      if(err) console.log(err);
-      expect(results[0].authToken).toEqual(user.authToken);
-      return done();
-    });
-  });
 });
