@@ -5,8 +5,9 @@ block content
     div(id="question-container")
     div(class="ui-grid-a")
       div(class="ui-block-a")
-        button(class="ui-btn question-btn") Option 1
-        button(class="ui-btn question-btn") Option 2
+        button(class="ui-btn question-btn" id="op0" value=0)
+        button(class="ui-btn question-btn" id="op1" value=1)
       div(class="ui-block-b")
-        button(class="ui-btn question-btn") Option 3
-        button(class="ui-btn question-btn") Option 4
+        button(class="ui-btn question-btn" id="op2" value=2)
+        button(class="ui-btn question-btn" id="op3" value=3)
+  script(src="/javascripts/question_client.js")

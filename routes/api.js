@@ -80,12 +80,12 @@ router.post('/create_game', function(req, res) {
  * @param {Number} choosenAlternative
  */
 router.get('/check_answer', function(req, res){
-  var chosenAlternative = req.body.chosenAlternative;
+  var chosenAlternative = req.query.chosenAlternative;
   if(chosenAlternative === undefined)
     return invalidRequest(res);
   async.waterfall([
     function(callback){
-      var user = User.findOne(req.user.username)
+      User.findOne(req.user.username)
       .populate('currentGame')
       .exec(function(err,user){
         if(user === null)
