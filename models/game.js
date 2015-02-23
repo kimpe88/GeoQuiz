@@ -19,10 +19,12 @@ Checks if the user chose the correct alternativ
 gameSchema.methods.checkAnswer = function(alternative, callback) {
   this.populate('question', function(err, game) {
     if(err) return callback(err,false);
-    if(game.question.correctAlternative === alternative)
+    // == comparison instead of === to automatically cast values
+    if(game.question.correctAlternative == alternative) {
       return callback(null,true);
-    else
+    } else{
       return callback(null,false);
+    }
  });
 };
 

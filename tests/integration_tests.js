@@ -85,9 +85,8 @@ describe('/api', function() {
       Question.findById(user.currentGame.question, function(err,question){
         var answer = question.correctAlternative + 1 % 4;
         request(app)
-        .get('/api/check_answer')
+        .get('/api/check_answer?chosenAlternative=' + answer)
         .auth(details.username, details.password)
-        .send({chosenAlternative: answer})
         .expect(200)
         .expect(function(res){
           if(res.body.correctAnswer !== false || res.body.timedOut !== false)
@@ -100,10 +99,10 @@ describe('/api', function() {
       Question.findById(user.currentGame.question, function(err,question){
         if(err) throw err;
         var answer = question.correctAlternative;
+        var url = '/api/check_answer?chosenAlternative=' + answer;
         request(app)
-        .get('/api/check_answer')
+        .get(url)
         .auth(details.username, details.password)
-        .send({chosenAlternative: answer})
         .expect(200)
         .expect(function(res){
           if(res.body.correctAnswer !== true || res.body.timedOut !== false)
@@ -118,8 +117,9 @@ describe('/api', function() {
         if(err) throw err;
         Question.findById(user.currentGame.question, function(err,question){
           var answer = question.correctAlternative;
+          var url = '/api/check_answer?chosenAlternative=' + answer;
           request(app)
-          .get('/api/check_answer')
+          .get(url)
           .auth(details.username, details.password)
           .send({chosenAlternative: answer})
           .expect(200)

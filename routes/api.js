@@ -13,7 +13,7 @@ router.get('/', function(req, res){
 
 /* listens for post request
  * creates a new game for specified user
- * @param {String} userid
+ * requires basic http auth
  * @param {Decimal} lat
  * @param {Decimal} long
  */
@@ -23,7 +23,7 @@ router.post('/create_game', function(req, res) {
   // If not all request params are supplied
   // respond with an error message
   if(!lat || !long){
-    return invalidRequest(res);
+    return invalidRequest(res, "lat or long");
   }
 
   // Execute the functions in order with return values of
@@ -33,7 +33,7 @@ router.post('/create_game', function(req, res) {
       User.findOne({username: req.user.username}).populate('currentGame')
       .exec(function(err, user) {
         if(user === null)
-          return invalidRequest(res);
+          return errorRequest(res, "user error");
 
         // If user is already in a game, remove it
         // before creating a new one
@@ -53,14 +53,18 @@ router.post('/create_game', function(req, res) {
       newGame.question = question._id;
       user.currentGame = newGame._id;
       newGame.save(function(err){
-        return callback(err,user,newGame,question);
+        return callback(err,user,question);
+      });
+    },
+    function(user,question, callback){
+      user.save(function(err){
+        return callback(err, question);
       });
     }
   ],
-    function(err,user, game, question){
+    function(err, question){
       if(err){
-        console.log("failed to create game " + game);
-        return errorRequest(res);
+        return errorRequest(res, "failed to create game");
       }
       var details = {
         questionText: question.questionText,
@@ -75,21 +79,20 @@ router.post('/create_game', function(req, res) {
 /* listens for post request to /api/check_answer
  * checks if provided answer is correct or not
  * and whether answer was provided before timeout
- * @param {String} username
- * @param {String} password
+ * requires basic http auth
  * @param {Number} choosenAlternative
  */
 router.get('/check_answer', function(req, res){
   var chosenAlternative = req.query.chosenAlternative;
   if(chosenAlternative === undefined)
-    return invalidRequest(res);
+    return invalidRequest(res, "chosenAlternative");
   async.waterfall([
     function(callback){
-      User.findOne(req.user.username)
+      User.findById(req.user._id)
       .populate('currentGame')
       .exec(function(err,user){
         if(user === null)
-          invalidRequest(res);
+          errorRequest(res, "user");
         var results = {timedOut: user.currentGame.hasTimedOut()};
         return callback(err,user, results);
       });
@@ -101,25 +104,25 @@ router.get('/check_answer', function(req, res){
       });
     }],
     function(err, results){
-      if(err) return errorRequest(res);
+      if(err) return errorRequest(res, "failed to check answer");
       res.status(200);
       return res.json(results);
     }
   );
 });
 
-function errorRequest(res){
+function errorRequest(res, message){
   var err = {
     success: false,
-    message: 'Internal server error'
+    message: 'Internal server error: ' + message
   };
   res.status(500);
   return res.json(err);
 }
-function invalidRequest(res){
+function invalidRequest(res, paramName){
   var err = {
     success: false,
-    message: 'required request params not supplied'
+    message: 'required request params not supplied, missing ' + paramName
   };
   res.status(400);
   return res.json(err);
