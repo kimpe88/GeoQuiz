@@ -51,19 +51,33 @@ app.post('/user', function(req,res){
   var username = req.body.username;
   var password = req.body.password;
 
+  var intErr = function(){
+    res.status(500);
+    res.json("Failed to create user");
+  };
+
   if(username === undefined || password === undefined) {
     res.status(400);
-    return res.json("missing username or password");
+    return res.json("Missing username or password");
   }
 
-  var user = new User({username: username, password: password});
-  user.save(function(err,user){
+  User.findOne({username: username}, function(err, user) {
     if(err) {
-      res.status(500);
-      return res.json("could not save user");
+      return intErr();
     }
-
-    return res.sendStatus(201);
+    // If username already exists we can't register
+    if(user) {
+      res.status(400);
+      return res.json("Username taken");
+    }
+    user = new User({username: username, password: password});
+    user.save(function(err,user){
+      if(err) {
+        return intErr();
+      }
+      res.status(201);
+      return res.json("User successfully created");
+    });
   });
 });
 
@@ -81,22 +95,6 @@ db.once('open', function() {
 app.use('*', function(res, req, next) {
   req.db = db;
 });
-
-
-
-// TODO needs custom domain to work
-// Redirect the user to Facebook for authentication.  When complete,
-// Facebook will redirect the user back to the application at
-//     /auth/facebook/callback
-//app.get('/auth/facebook', auth.authenticate('facebook'));
-
-// Facebook will redirect the user to this URL after approval.  Finish the
-// authentication process by attempting to obtain an access token.  If
-// access was granted, the user will be logged in.  Otherwise,
-// authentication has failed.
-//app.get('/auth/facebook/callback', 
-//  auth.authenticate('facebook', { successRedirect: '/',
-//                                      failureRedirect: '/login' }));
 
 /// catch 404 and forward to error handler
 app.use(function(req, res, next) {

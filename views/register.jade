@@ -1,0 +1,17 @@
+extends layout
+
+block content
+  div(data-role="header" class="lead header-index")
+    center
+      h1 Register
+  div(data-role="main" class="ui-content")
+    div(id="resultsbox")
+    div(id="registerbox")
+      input(id="username" type="text" name="user" placeholder="username")
+      input(id="password" type="password", name="pass" placeholder="password")
+      input(id="passwordConfirmation" type="password" name="pass" placeholder="password confirmation")
+      a(href="#" data-role="button" id="registerButton") Register
+  div(data-role="footer")
+    center
+      h5 VikingQuest© 2015
+  script(src="/javascripts/register.js")
