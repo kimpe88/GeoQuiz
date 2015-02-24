@@ -7,8 +7,12 @@ block content
   div(data-role="main" class="ui-content")
     div(id="viking")
       img(src="images/viking.png")
-    a(href="/auth/facebook" data-role="button") Login with Facebook
+    div.loginbox
+      input(id="username" type="text", name="user")
+      input(id="password" type="password", name="pass")
+      a(href="#" data-role="button" id="loginButton") Login
     a(href="howtoplay" data-role="button") How To Play
   div(data-role="footer")
     center
       h5 VikingQuest© 2015
+  script(src="/javascripts/login.js")

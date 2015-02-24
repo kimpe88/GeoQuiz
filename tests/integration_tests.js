@@ -3,6 +3,15 @@ var app = require('../app');
 var User = require('../models/user');
 var Question = require('../models/question');
 
+var user, details;
+beforeEach(function(done) {
+  User.findOne().populate('currentGame').exec(function(err, foundUser){
+    user = foundUser;
+    details = {username: user.username, password: "password"};
+    return done();
+  });
+});
+
 describe('GET root path', function(done) {
   it('responds with 200 sucess', function(done) {
     request(app)
@@ -20,12 +29,14 @@ describe('GET /play path', function() {
   it('responds with 200 sucess', function(done) {
     request(app)
     .get('/play')
+    .auth(details.username, details.password)
     .expect(200, done);
   });
 
   it('it contains start game', function(done) {
     request(app)
     .get('/play')
+    .auth(details.username, details.password)
     .expect(/start game/i, done);
   });
 
@@ -45,15 +56,6 @@ describe('GET /howtoplay path', function() {
 });
 
 describe('/api', function() {
-  var user, details;
-  beforeEach(function(done) {
-    User.findOne().populate('currentGame').exec(function(err, foundUser){
-      user = foundUser;
-      details = {username: user.username, password: "password"};
-      return done();
-    });
-  });
-
   it('authenticates correctly', function(done) {
     request(app)
     .get('/api')

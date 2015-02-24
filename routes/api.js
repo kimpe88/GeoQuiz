@@ -100,11 +100,27 @@ router.get('/check_answer', function(req, res){
     function(user, results, callback){
       user.currentGame.checkAnswer(chosenAlternative, function(err, correct){
         results.correctAnswer = correct;
-        return callback(err, results);
+        return callback(err, user, results);
       });
-    }],
+    },
+    function(user,results,callback){
+      // Create a new question
+      user.currentGame.timeOut = new Date();
+      Question.randomQuestion(function(err,question){
+        user.currentGame.question = question;
+        user.currentGame.save(function(err){
+          results.nextQuestion = {
+            questionText: question.questionText,
+            alternatives: question.alternatives
+          };
+          return callback(err, results);
+        });
+      });
+    }
+    ],
     function(err, results){
       if(err) return errorRequest(res, "failed to check answer");
+
       res.status(200);
       return res.json(results);
     }

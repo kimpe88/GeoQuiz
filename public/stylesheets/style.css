@@ -30,6 +30,13 @@
   
 }
 
+.correct-answer {
+  background-color: green;
+}
+.incorrect-answer {
+  background-color: red;
+}
+
 /*
 div .col-md-12 .trophy {
 

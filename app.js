@@ -4,6 +4,7 @@ var favicon = require('static-favicon');
 var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
+var session = require('express-session');
 var mongoose = require('mongoose');
 var passport = require('passport');
 var auth = require('./models/auth');
@@ -26,12 +27,22 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
+app.use(session({ secret: 'keyboard cat' }));
 app.use(passport.initialize());
+app.use(passport.session());
 
 // Custom routes
 app.use('/', index);
-app.use('/play', play);
+app.use('/play', auth.isAuthenticated, play);
 app.use('/api', auth.isAuthenticated, api);
+
+
+// Quick fix for login, should be replaced with
+// facebook auth or more advanced system
+app.post('/login', auth.isAuthenticated, function(req, res){
+  console.log('auth successful');
+  res.sendStatus(200);
+});
 
 // Creates a new user by sending a POST to /user
 // @param {String} username
