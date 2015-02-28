@@ -40,7 +40,11 @@ router.post('/create_game', function(req, res) {
         if(user.currentGame){
           Game.remove(user.currentGame);
         }
-        var newGame = Game({timeOut: new Date()});
+        var newGame = Game({
+          timeOut: new Date(),
+          lat: lat,
+          long: long
+        });
         return callback(err, user, newGame);
       });
     },
@@ -53,23 +57,24 @@ router.post('/create_game', function(req, res) {
       newGame.question = question._id;
       user.currentGame = newGame._id;
       newGame.save(function(err){
-        return callback(err,user,question);
+        var details = {
+          questionText: question.questionText,
+          alternatives: question.alternatives,
+          lives: newGame.lives
+        };
+        return callback(err, user, details);
       });
     },
-    function(user,question, callback){
+    function(user, details, callback){
       user.save(function(err){
-        return callback(err, question);
+        return callback(err, details);
       });
     }
   ],
-    function(err, question){
+    function(err, details){
       if(err){
         return errorRequest(res, "failed to create game");
       }
-      var details = {
-        questionText: question.questionText,
-        alternatives: question.alternatives
-      };
       res.status(201);
       return res.json(details);
     }
@@ -92,14 +97,35 @@ router.get('/check_answer', function(req, res){
       .populate('currentGame')
       .exec(function(err,user){
         if(user === null)
-          errorRequest(res, "user");
-        var results = {timedOut: user.currentGame.hasTimedOut()};
+          return errorRequest(res, "user");
+        var results = {
+          timedOut: user.currentGame.hasTimedOut(),
+        };
         return callback(err,user, results);
       });
     },
     function(user, results, callback){
       user.currentGame.checkAnswer(chosenAlternative, function(err, correct){
         results.correctAnswer = correct;
+        // Decrement lives if they answered incorrectly
+        if (!correct){
+          user.currentGame.lives--;
+        } else {
+          user.currentGame.score++;
+        }
+        results.lives = user.currentGame.lives;
+        results.score = user.currentGame.score;
+        return callback(err, user, results);
+      });
+    },
+    function(user, results, callback) {
+      user.currentGame.save(function(err){
+        // If we have no lives left there's no point
+        // to continue with fetching a question
+        if(user.currentGame.lives <= 0) {
+          res.status(200);
+          return res.json(results);
+        }
         return callback(err, user, results);
       });
     },
@@ -111,7 +137,7 @@ router.get('/check_answer', function(req, res){
         user.currentGame.save(function(err){
           results.nextQuestion = {
             questionText: question.questionText,
-            alternatives: question.alternatives
+            alternatives: question.alternatives,
           };
           return callback(err, results);
         });

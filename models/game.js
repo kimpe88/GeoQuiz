@@ -6,8 +6,12 @@ var Question = require('../models/question');
 var TIME_OUT = 30000;
 // Create a schema for storing games in progress
 var gameSchema = Schema({
-   timeOut: Date,
-   question: { type: Schema.Types.ObjectId, ref: 'Question'  }
+  lives: { type: Number, default: 3 },
+  timeOut: { type: Date, default: Date.now },
+  lat: { type: Number },
+  long: { type: Number},
+  score: {type: Number, default: 0 },
+  question: { type: Schema.Types.ObjectId, ref: 'Question'  }
 });
 
 /*
