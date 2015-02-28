@@ -1,7 +1,17 @@
-/**
- * Builds the GoogleMap object and locates the users position.
- */
+var USERNAME_ENEMY_TEMP = "user2";
+var USERNAME_TEMP = "user1";
+var USERNAME_ALLY_TEMP = "viking";
 var map;
+var radius;
+var l = window.location;
+var base_url = l.protocol + "//" + l.host + "/";
+var scale = 0.001;
+var drawOffset = 0.0005;
+var marker;
+var pos;
+var COLOR_ALLY = "#00FFFF";
+var COLOR_RIVAL = "#FF0000";
+var COLOR_SELF = "#00FF00";
 
 var geolocationMap = function () {
     function initialize() {
@@ -10,22 +20,16 @@ var geolocationMap = function () {
         };
         map = new google.maps.Map(document.getElementById('map-canvas'), mapOptions);
 
-        // Try HTML5 geolocation
         if (navigator.geolocation) {
             navigator.geolocation.getCurrentPosition(function (position) {
-                var pos = new google.maps.LatLng(position.coords.latitude, position.coords.longitude);
-
-                //alert(pos);
-
+                pos = new google.maps.LatLng(position.coords.latitude, position.coords.longitude);
                 var icon = "images/viking icon.png";
-
-                var marker = new google.maps.Marker({
+                marker = new google.maps.Marker({
                     position: pos,
                     map: map,
                     icon: icon
                 });
-
-                var radius = new google.maps.Circle({
+                radius = new google.maps.Circle({
                     strokeColor: '#FFFF00',
                     strokeOpacity: 0.8,
                     strokeWeight: 2,
@@ -35,52 +39,23 @@ var geolocationMap = function () {
                     map: map,
                     radius: 180
                 });
+                radius.bindTo("center", marker, "position");
 
                 //Make AJAX calls and use these to draw rectangles on the area
-
-                //TEMP STUFF OMG!!!
-                 var rectangle = new google.maps.Rectangle({
-                    strokeColor: '#00FF00',
-                    strokeOpacity: 0.8,
-                    strokeWeight: 2,
-                    fillColor: '#009900',
-                    fillOpacity: 0.35,
-                    map: map,
-                    bounds: new google.maps.LatLngBounds(
-                            new google.maps.LatLng(position.coords.latitude + (1 * 0.001), position.coords.longitude + (1 * 0.001)),
-                            new google.maps.LatLng(position.coords.latitude + (2 * 0.001), position.coords.longitude + (2 * 0.001)))
-                });
-                rectangle = new google.maps.Rectangle({
-                    strokeColor: '#00FF00',
-                    strokeOpacity: 0.8,
-                    strokeWeight: 2,
-                    fillColor: '#009900',
-                    fillOpacity: 0.35,
-                    map: map,
-                    bounds: new google.maps.LatLngBounds(
-                            new google.maps.LatLng(position.coords.latitude + (2 * 0.001), position.coords.longitude + (1 * 0.001)),
-                            new google.maps.LatLng(position.coords.latitude + (3 * 0.001), position.coords.longitude + (2 * 0.001)))
-                });
-                rectangle = new google.maps.Rectangle({
-                    strokeColor: '#00FF00',
-                    strokeOpacity: 0.8,
-                    strokeWeight: 2,
-                    fillColor: '#009900',
-                    fillOpacity: 0.35,
-                    map: map,
-                    bounds: new google.maps.LatLngBounds(
-                            new google.maps.LatLng(position.coords.latitude + (1 * 0.001), position.coords.longitude + (2 * 0.001)),
-                            new google.maps.LatLng(position.coords.latitude + (2 * 0.001), position.coords.longitude + (3 * 0.001)))
-                });
-
+                fetchKnownAreas();
                 map.setCenter(pos);
-            }, function () {
+
+                //TEMP, claim areas instantly (refresh to see)
+                claimAreas(getSurroundingAreas());
+            }
+            , function () {
                 handleNoGeolocation(true);
             });
         } else {
             // Browser doesn't support Geolocation
             handleNoGeolocation(false);
         }
+
     }
 
     function handleNoGeolocation(errorFlag) {
@@ -91,27 +66,95 @@ var geolocationMap = function () {
             content = 'Error: Your browser doesn\'t support geolocation.';
         }
 
-        var options = {
-            map: map,
-            position: new google.maps.LatLng(60, 105),
-            content: content
-        };
-
         var infowindow = new google.maps.InfoWindow(options);
         map.setCenter(options.position);
     }
 
+
     google.maps.event.addDomListener(window, 'load', initialize);
 };
 
-/**
- * MEMO:
- * Latitude (x) -90 --> 90
- * Longitude (y) -180 --> 180
- * Scale = 0.001
- * Results in:
- * 180'000 x 320'000 = 57'600'000'000 tiles! (oh shit!)
- */
+var claimAreas = function(areas) {
+    jQuery.ajax({
+        url: base_url + 'play/claim_area',
+        dataType: 'json',
+        type: 'POST',
+        timeout: 5000,
+        data: {
+            geo_data: areas,
+        },
+        success: function (response) {
+            // success - for now just log it
+            console.log(response.debug_info);
+        },
+        error: function (jqXHR, textStatus, errorThrown) {
+            console.log(JSON.stringify(jqXHR));
+            console.log("AJAX error: " + textStatus + ' : ' + errorThrown);
+        }
+    });
+}
+
+var fetchKnownAreas = function() {
+    jQuery.ajax({
+        url: base_url + 'play/get_known_locations',
+        dataType: 'json',
+        type: 'POST',
+        timeout: 5000,
+        success: function (response) {
+            if (response.status === 'OK') {
+                var tiles = response.tiles;
+                // loop through places and add markers
+                for (var t in tiles) {
+                    //create gmap latlng obj
+                    var LatLngBounds = new google.maps.LatLngBounds(
+                            new google.maps.LatLng(tiles[t].geo[0] - drawOffset, tiles[t].geo[1] - drawOffset),
+                            new google.maps.LatLng(tiles[t].geo[0] + drawOffset, tiles[t].geo[1] + drawOffset)
+                            );
+
+                    var color = COLOR_SELF;
+                    if (tiles[t].owner === USERNAME_ALLY_TEMP) {
+                        color = COLOR_ALLY;
+                    } else if (tiles[t].owner === USERNAME_ENEMY_TEMP) {
+                        color = COLOR_RIVAL;
+                    }
+
+                    var rectangle = new google.maps.Rectangle({
+                        strokeColor: color,
+                        strokeOpacity: 0.8,
+                        strokeWeight: 2,
+                        fillColor: color,
+                        fillOpacity: 0.35,
+                        map: map,
+                        bounds: LatLngBounds
+                    });
+                    google.maps.event.addListener(rectangle, 'click', move);
+                }
+            }
+        }, error: function (xmlhttprequest, status, message) {
+            // do error checking
+            alert("something went wrong");
+            console.error(status);
+        }
+    })
+}
+
+var getSurroundingAreas = function() {
+    var areas = [];
+    var bounds = radius.getBounds();
+    for (var x = -3 * scale; x <= 3 * scale; x += scale) {
+        for (var y = -3 * scale; y <= 3 * scale; y += scale) {
+            var latLng = new google.maps.LatLng(pos.lat() + x, pos.lng() + y);
+            if (bounds.contains(latLng)) {
+                areas.push(latLng.toString());
+            }
+        }
+    }
+    return areas;
+}
+
+var move = function(){
+    
+}
 
 
 //Run

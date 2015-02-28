@@ -1,25 +1,20 @@
 /**
- * Tile consists of:
- * Coordinate (int x, int y)
- * Owner (String username)
- * Score (int)
+ * Tile is used for area claiming, mostly for visual effect
  */
 var mongoose = require('mongoose');
+var Schema = mongoose.Schema;
 
-//Schema
-var tileSchema = mongoose.Schema({
-    x: Number,
-    y: Number,
-    owner: String,
-    score: Number
-});
+var TileSchema = new Schema({
+    owner: {type: String, required: true},
+    score: {type: Number, required: true},
+    geo: {type: [Number], index: {type: '2dsphere', sparse: true}, required: true, unique: true},
+})
 
-//The Actual Object
 var Tile;
 if (mongoose.models.Tile) {
     Tile = mongoose.model('Tile');
 } else {
-    Tile = mongoose.model('Tile', tileSchema);
+    Tile = mongoose.model('Tile', TileSchema);
 }
 
 module.exports = Tile;
