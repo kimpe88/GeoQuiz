@@ -3,7 +3,7 @@ extends layout
 block content
  div(class="lead")
    center
-     h1 Come On ! 
+     h1 Come On !
      h2 You are almost in the Top 50 !
  div(data-role="main" class="ui-content")
     div(id="viking")

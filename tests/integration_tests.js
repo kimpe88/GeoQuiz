@@ -135,8 +135,52 @@ describe('/api', function() {
     });
   });
 
-  //describe('register_user', function() {
-    
-  //});
+  it('decremends lives when user answers incorrecltly', function(done) {
+    Question.findById(user.currentGame.question, function(err,question){
+      var answer = question.correctAlternative + 1 % 4;
+      request(app)
+      .get('/api/check_answer?chosenAlternative=' + answer)
+      .auth(details.username, details.password)
+      .expect(200)
+      .expect(function(res){
+        if(res.body.lives !== 2)
+          throw new Error();
+      })
+      .end(done);
+    });
+  });
+
+  it('does not respond with new question when out of lives', function(done) {
+    Question.findById(user.currentGame.question, function(err,question){
+      var answer = question.correctAlternative + 1 % 4;
+      user.currentGame.lives = 1;
+      user.currentGame.save(function(err){
+        if(err) throw err;
+        request(app)
+        .get('/api/check_answer?chosenAlternative=' + answer)
+        .auth(details.username, details.password)
+        .expect(200)
+        .expect(function(res){
+          if(res.body.lives !== 0 || res.body.nextQuestion !== undefined )
+            throw new Error();
+        })
+        .end(done);
+      });
+    });
+  });
+});
+describe('register_user', function() {
+  it('registers a user successfully with unique name', function(done) {
+    request(app)
+    .post('/user')
+    .send({username: "newUser", password: "password"})
+    .expect(201, done);
+  });
+  it('fails to register when username is taken', function(done) {
+    request(app)
+    .post('/user')
+    .send({username: user.username, password: "password"})
+    .expect(400, done);
+  });
 });
 

@@ -7,10 +7,11 @@ block content
   div(data-role="main" class="ui-content")
     div(id="viking")
       img(src="images/viking.png")
-    div.loginbox
-      input(id="username" type="text", name="user")
-      input(id="password" type="password", name="pass")
+    div(id="loginbox")
+      input(id="username" type="text" name="user" placeholder="username")
+      input(id="password" type="password" name="pass" placeholder="password")
       a(href="#" data-role="button" id="loginButton") Login
+    a(href="register" data-role="button") Register
     a(href="howtoplay" data-role="button") How To Play
   div(data-role="footer")
     center

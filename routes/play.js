@@ -2,6 +2,7 @@ var express = require('express');
 var router = express.Router();
 var async = require('async');
 var Tile = require("../models/tile.js");
+var User = require('../models/user');
 
 //is mapped to /play
 router.get('/', function (req, res) {
@@ -25,9 +26,8 @@ router.get('/quiz_succeeded', function (req, res) {
 
 //is mapped to /play/claim_area
 router.post('/claim_area', function (req, res) {
-    //var new_owner = req.user.username;
-    var new_owner = "user2";
-    var score = 3;
+    var new_owner = req.user.username;
+    var score = 3; //TEMP, get this from req!
     var locations = req.body.geo_data; //All locations in range (in the client we trust xD...)
     var claimed_tiles = 0;
     var claimed_users = [];
@@ -110,6 +110,21 @@ router.post('/claim_area', function (req, res) {
             callback();
         });
     }, function(err){});
+
+router.get('/quiz/finished', function(req, res){
+  User.findOne({username: req.user.username}).populate('currentGame').exec(function(err, user){
+    if(err || !user){
+      res.sendStatus(500);
+    }
+
+    //TODO get or create tile for user if user's score > highscore render win page else lose page
+    var score = 0, highscore = 0;
+    if(score >= highscore){
+      res.render('quiz_succeeded',{AREA_NAME: 'KISTA 35.20', MYRANK: 3,MYSCORE:37500});
+    } else {
+      res.render('quiz_failed',{AREA_NAME: 'KISTA 35.20'});
+    }
+  });
 });
 
 //is mapped to /play/get_known_locations
