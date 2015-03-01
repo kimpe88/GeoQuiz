@@ -6,16 +6,12 @@ block content
       img(src="/images/trophy.png")
   div(class="row col-md-12")
     center
-      h1 Congratulations ! 
+      h1 Well played ! 
     div(class="row col-md-12  text-center")
-      if MYRANK ==1   
-        h3(style="display:inline;") You are super-awesome! You are the 1# NEW KING of  
-        h2(style="display:inline;")=AREA_NAME
+      if CLAIMED_TILES > 0  
+        h3(style="display:inline;") 'You have conquered '=CLAIMED_TILES' tiles from '=CLAIMED_USERS
       else
-        h3(style="display:inline;") 'You are great! Your rank is '
-        h2(style="display:inline;")=MYRANK 
-        h3(style="display:inline;") # in 
-        h2(style="display:inline;")=AREA_NAME
+        h3(style="display:inline;") 'You did not conquer any tiles, try again, move to another area or use your teleportation scrolls!'
   div(class="ui-content")
     div(id="gameover" class="row col-xs-12")
       img(src="/images/viking-logo.png")

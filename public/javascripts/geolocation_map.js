@@ -23,7 +23,7 @@ var geolocationMap = function () {
         if (navigator.geolocation) {
             navigator.geolocation.getCurrentPosition(function (position) {
                 pos = new google.maps.LatLng(position.coords.latitude, position.coords.longitude);
-                var icon = "images/viking icon.png";
+                var icon = "../images/viking icon.png";
                 marker = new google.maps.Marker({
                     position: pos,
                     map: map,
@@ -40,13 +40,29 @@ var geolocationMap = function () {
                     radius: 180
                 });
                 radius.bindTo("center", marker, "position");
-
-                //Make AJAX calls and use these to draw rectangles on the area
-                fetchKnownAreas();
                 map.setCenter(pos);
 
-                //TEMP, claim areas instantly (refresh to see)
-                claimAreas(getSurroundingAreas());
+                fetchKnownAreas();
+
+                //Store the geo data on the server
+                jQuery.ajax({
+                    url: base_url + 'play/set_geo',
+                    dataType: 'json',
+                    type: 'POST',
+                    timeout: 5000,
+                    data: {
+                        lat: pos.lat(),
+                        lng: pos.lng()
+                    },
+                    success: function (response) {
+                        if (response.status === 'OK') {
+                            console.log(pos.toString() + " = [" + response.geo[0] + ", " + response.geo[1] + "]?");
+                        }
+                    }, error: function (jqXHR, textStatus, errorThrown) {
+                        console.log(JSON.stringify(jqXHR));
+                        console.log("AJAX error: " + textStatus + ' : ' + errorThrown);
+                    }
+                });
             }
             , function () {
                 handleNoGeolocation(true);
@@ -74,27 +90,7 @@ var geolocationMap = function () {
     google.maps.event.addDomListener(window, 'load', initialize);
 };
 
-var claimAreas = function(areas) {
-    jQuery.ajax({
-        url: base_url + 'play/claim_area',
-        dataType: 'json',
-        type: 'POST',
-        timeout: 5000,
-        data: {
-            geo_data: areas,
-        },
-        success: function (response) {
-            // success - for now just log it
-            console.log(response.debug_info);
-        },
-        error: function (jqXHR, textStatus, errorThrown) {
-            console.log(JSON.stringify(jqXHR));
-            console.log("AJAX error: " + textStatus + ' : ' + errorThrown);
-        }
-    });
-}
-
-var fetchKnownAreas = function() {
+var fetchKnownAreas = function () {
     jQuery.ajax({
         url: base_url + 'play/get_known_locations',
         dataType: 'json',
@@ -111,23 +107,26 @@ var fetchKnownAreas = function() {
                             new google.maps.LatLng(tiles[t].geo[0] + drawOffset, tiles[t].geo[1] + drawOffset)
                             );
 
-                    var color = COLOR_SELF;
+                    var color = null;
                     if (tiles[t].owner === USERNAME_ALLY_TEMP) {
                         color = COLOR_ALLY;
                     } else if (tiles[t].owner === USERNAME_ENEMY_TEMP) {
                         color = COLOR_RIVAL;
+                    } else if (tiles[t].owner === USERNAME_TEMP) {
+                        color = COLOR_SELF;
                     }
-
-                    var rectangle = new google.maps.Rectangle({
-                        strokeColor: color,
-                        strokeOpacity: 0.8,
-                        strokeWeight: 2,
-                        fillColor: color,
-                        fillOpacity: 0.35,
-                        map: map,
-                        bounds: LatLngBounds
-                    });
-                    google.maps.event.addListener(rectangle, 'click', move);
+                    if (color !== null) {
+                        var rectangle = new google.maps.Rectangle({
+                            strokeColor: color,
+                            strokeOpacity: 0.8,
+                            strokeWeight: 2,
+                            fillColor: color,
+                            fillOpacity: 0.35,
+                            map: map,
+                            bounds: LatLngBounds
+                        });
+                        google.maps.event.addListener(rectangle, 'click', move);
+                    }
                 }
             }
         }, error: function (xmlhttprequest, status, message) {
@@ -135,10 +134,10 @@ var fetchKnownAreas = function() {
             alert("something went wrong");
             console.error(status);
         }
-    })
+    });
 }
 
-var getSurroundingAreas = function() {
+var getSurroundingAreas = function () {
     var areas = [];
     var bounds = radius.getBounds();
     for (var x = -3 * scale; x <= 3 * scale; x += scale) {
@@ -152,10 +151,9 @@ var getSurroundingAreas = function() {
     return areas;
 }
 
-var move = function(){
-    
-}
+var move = function () {
 
+}
 
 //Run
 geolocationMap();
